@@ -7,6 +7,7 @@ import { IMenu } from '../../routes/getMenuFromRoutes';
 import { ILocale } from '../../routes/getLocaleFromRoutes';
 import Navbar from './Navbar';
 import SideMenu from './SideMenu';
+import Props from './builtins/Props';
 import SlugList, { scrollToSlug } from './SlugList';
 import SearchBar from './SearchBar';
 import 'prismjs/themes/prism.css';
@@ -34,7 +35,7 @@ export interface ILayoutProps {
  */
 const findCurrentRouteMeta = (route, location) => {
   const currentRouteMeta = (route as any).routes.find(
-    currentRoute => currentRoute.path === location.pathname,
+    (currentRoute) => currentRoute.path === location.pathname,
   )?.meta;
   if (currentRouteMeta) {
     return currentRouteMeta;
@@ -249,14 +250,14 @@ export default class Layout extends Component<ILayoutProps & RouteProps> {
     }
   };
 
-  renderHero = hero => (
+  renderHero = (hero) => (
     <>
       <div className="__dumi-default-layout-hero">
         <h1>{hero.title}</h1>
         {/* SSR 下只有 div 的 div dangerouslySetInnerHTML 才能渲染 */}
         <div dangerouslySetInnerHTML={{ __html: hero.desc }} />
         {hero.actions &&
-          hero.actions.map(action => (
+          hero.actions.map((action) => (
             <Link to={action.link} key={action.text}>
               <button type="button">{action.text}</button>
             </Link>
@@ -265,9 +266,9 @@ export default class Layout extends Component<ILayoutProps & RouteProps> {
     </>
   );
 
-  renderFeatures = features => (
+  renderFeatures = (features) => (
     <div className="__dumi-default-layout-features">
-      {features.map(feat => (
+      {features.map((feat) => (
         <dl
           key={feat.title}
           style={{ backgroundImage: feat.icon ? `url(${feat.icon})` : undefined }}
@@ -345,6 +346,7 @@ export default class Layout extends Component<ILayoutProps & RouteProps> {
           {showFeatures && this.renderFeatures(currentRouteMeta.features)}
           <div className="__dumi-default-layout-content">
             {children}
+            <Props />
             {!showHero && !showFeatures && (
               <div className="__dumi-default-layout-footer-meta">
                 {repoPlatform && (
