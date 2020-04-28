@@ -12,10 +12,10 @@ export default (api: IApi) => {
     },
   });
 
-  api.onGenerateFiles(() => {
+  api.onGenerateFiles(async () => {
     api.writeTmpFile({
       path: '.dumi/assets.json',
-      content: JSON.stringify(assetsPkg.export()),
+      content: JSON.stringify(await assetsPkg.export()),
     });
   });
 };

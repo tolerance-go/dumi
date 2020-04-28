@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { getModuleResolvePath } from '../utils/moduleResolver';
+import { SchemaParser } from '@alipay/yunfengdie-sdk';
+import refParser from 'json-schema-ref-parser';
 import { getDepsForDemo } from '../transformer/demo';
 
 interface IBlockAsset {
@@ -42,13 +44,12 @@ class AssetsPackage {
   constructor(name: string, description: string) {
     this.name = name;
     this.description = description;
-    this.collectAtomAssets();
   }
 
   /**
    * collect all atom assets from entry
    */
-  collectAtomAssets() {
+  async collectAtomAssets() {
     let entryPath: string;
     let entryContent: string;
 
@@ -71,9 +72,27 @@ class AssetsPackage {
         entryExports[path.parse(item.path).name] = item.content;
       });
 
-      console.log(entryExports);
+      const parser = new SchemaParser({
+        basePath: this.root,
+        entryPath: './src/index.ts',
+      });
+      await parser.load();
+      const result = await parser.parse();
+
+      await (refParser as any).dereference(result, {
+        dereference: {
+          circular: 'ignore',
+        },
+      });
       // TODO: parse props by feiyi
       // write to this.atoms
+      return Object.entries(result.components).reduce(
+        (col, [name, v]) => ({
+          ...col,
+          [name]: v.props,
+        }),
+        {},
+      );
     }
   }
 
@@ -120,12 +139,13 @@ class AssetsPackage {
   /**
    * export asset package meta data
    */
-  export() {
+  async export() {
     return {
       name: this.name,
       description: this.description,
       assets: {
         examples: this.examples,
+        atoms: await this.collectAtomAssets(),
       },
     };
   }
