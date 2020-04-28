@@ -31,8 +31,14 @@ export const PLAIN_TEXT_EXT = [
 
 function analyzeDeps(
   raw: babel.BabelFileResult['ast'] | string,
-  { isTSX, fileAbsPath, entryAbsPath }: IDemoOpts & { entryAbsPath?: string },
+  {
+    isTSX,
+    fileAbsPath,
+    entryAbsPath,
+    depth = Infinity,
+  }: IDemoOpts & { entryAbsPath?: string; depth?: number },
   totalFiles?: IDepAnalyzeResult['files'],
+  currentDepth: number = 1,
 ): IDepAnalyzeResult {
   // support to pass babel transform result directly
   const ast =
@@ -92,15 +98,17 @@ function analyzeDeps(
             };
 
             // continue to collect deps for dep
-            if (LOCAL_DEP_EXT.includes(resolvePathParsed.ext)) {
+            if (LOCAL_DEP_EXT.includes(resolvePathParsed.ext) && depth > currentDepth) {
               const result = analyzeDeps(
                 files[fileName].content,
                 {
                   isTSX: /\.tsx?/.test(resolvePathParsed.ext),
                   fileAbsPath: resolvePath,
                   entryAbsPath: entryAbsPath || fileAbsPath,
+                  depth,
                 },
                 files,
+                currentDepth + 1,
               );
 
               Object.assign(files, result.files);
