@@ -34,6 +34,7 @@ export default () => {
       require.resolve('./plugins/navs'),
       require.resolve('./plugins/resolve'),
       require.resolve('./plugins/core'),
+      require.resolve('./plugins/assets'),
     ],
   };
 };

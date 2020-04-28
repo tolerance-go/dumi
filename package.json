@@ -7,6 +7,7 @@
     "dev": "cross-env BROWSER=none node ./packages/dumi/bin/dumi.js dev",
     "watch": "father-build build --watch",
     "doc:build": "cross-env BROWSER=none node ./packages/dumi/bin/dumi.js build",
+    "assets": "node ./packages/dumi/bin/dumi.js assets",
     "doc:deploy": "bash ./scripts/deploy_doc.sh",
     "build": "father-build",
     "changelog": "lerna-changelog",
