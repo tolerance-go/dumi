@@ -8,6 +8,7 @@ import nav from './nav';
 import group from './group';
 import fallback from './fallback';
 import redirect from './redirect';
+import component from './component';
 import relative from './relative';
 
 export type RouteProcessor = (
@@ -68,6 +69,7 @@ export default (routes: IRoute[], opts: IDumiOpts, umi: IApi) => {
     .use(group)
     .use(fallback)
     .use(redirect)
+    .use(component)
     .use(relative);
 
   return decorator.process(routes);
