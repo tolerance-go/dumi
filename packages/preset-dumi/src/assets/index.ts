@@ -4,6 +4,7 @@ import { getModuleResolvePath } from '../utils/moduleResolver';
 import { SchemaParser } from '@alipay/yunfengdie-sdk';
 import refParser from 'json-schema-ref-parser';
 import { getDepsForDemo } from '../transformer/demo';
+import { IApi } from '../../../dumi';
 
 interface IBlockAsset {
   name: string;
@@ -32,18 +33,51 @@ interface IExample {
   };
 }
 
+interface Preset {
+  name: string;
+  description: string;
+  props: {
+    [key: string]: any;
+  };
+}
+
 class AssetsPackage {
   root = process.cwd();
 
-  name = '';
+  presetPath = '.presets.json';
 
-  description = '';
+  npmPack;
 
   examples: IExample[] = [];
 
-  constructor(name: string, description: string) {
-    this.name = name;
-    this.description = description;
+  constructor(pkg: IApi['pkg']) {
+    this.npmPack = {
+      name: pkg.name,
+      version: pkg.version,
+      description: pkg.description,
+    };
+
+    const presets: Record<string, Preset[]> = JSON.parse(
+      fs.readFileSync(this.presetPath, { encoding: 'utf8' }),
+    );
+
+    this.examples = Object.entries(presets).reduce(
+      (col, [componentName, componentPresets]) => [
+        ...col,
+        ...componentPresets.map((p) => ({
+          ...p,
+          runtime: componentName,
+          dependencies: [
+            {
+              type: 'npmPack',
+              name: this.npmPack.name,
+              version: this.npmPack.version,
+            },
+          ],
+        })),
+      ],
+      [],
+    );
   }
 
   /**
@@ -141,8 +175,7 @@ class AssetsPackage {
    */
   async export() {
     return {
-      name: this.name,
-      description: this.description,
+      ...this.npmPack,
       assets: {
         examples: this.examples,
         atoms: await this.collectAtomAssets(),

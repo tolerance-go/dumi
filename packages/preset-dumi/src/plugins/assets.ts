@@ -2,13 +2,15 @@ import { IApi } from '@umijs/types';
 import Assets from '../assets';
 
 export default (api: IApi) => {
-  const assetsPkg = new Assets(api.userConfig.title, api.userConfig.description);
-
+  const assetsPkg = new Assets(api.pkg);
   // register assets command
   api.registerCommand({
     name: 'assets',
-    fn() {
-      console.log(assetsPkg.export());
+    async fn() {
+      api.writeTmpFile({
+        path: '.assets.json',
+        content: JSON.stringify(await assetsPkg.export(), null, 2),
+      });
     },
   });
 
