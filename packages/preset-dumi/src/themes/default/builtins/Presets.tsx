@@ -37,18 +37,20 @@ export default ({ module }) => {
               statusBar={false}
               search={false}
             />
-            <Button
-              style={{ marginTop: 16 }}
-              type="primary"
-              onClick={() =>
-                fetch('_dumi/presets', {
-                  method: 'POST',
-                  body: JSON.stringify({ [module]: presets }, null, 2),
-                })
-              }
-            >
-              保存预设值
-            </Button>
+            {process.env.NODE_ENV ==== 'development' && (
+              <Button
+                style={{ marginTop: 16 }}
+                type="primary"
+                onClick={() =>
+                  fetch('_dumi/presets', {
+                    method: 'POST',
+                    body: JSON.stringify({ [module]: presets }, null, 2),
+                  })
+                }
+              >
+                保存预设值
+              </Button>
+            )}
           </div>
         }
       >
