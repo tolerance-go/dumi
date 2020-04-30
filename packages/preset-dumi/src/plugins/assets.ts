@@ -1,3 +1,4 @@
+import url from 'url';
 import { IApi } from '@umijs/types';
 import axios from 'axios';
 import Assets from '../assets';
@@ -36,5 +37,29 @@ export default (api: IApi) => {
       path: '.dumi/assets.json',
       content: JSON.stringify(await assetsPkg.export()),
     });
+  });
+
+  api.addMiddewares(() => (req, res, next) => {
+    const parsed = url.parse(req.url);
+
+    if (parsed.pathname === '/_dumi/presets' && req.method === 'POST') {
+      let data = '';
+
+      req.on('data', (chunk) => (data += chunk));
+      req.on('end', async () => {
+        try {
+          assetsPkg.setPresets(data);
+          api.writeTmpFile({
+            path: '.dumi/assets.json',
+            content: JSON.stringify(await assetsPkg.export()),
+          });
+        } catch (err) {
+          /* */
+        }
+        next();
+      });
+    } else {
+      next();
+    }
   });
 };

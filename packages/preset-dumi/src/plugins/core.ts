@@ -16,19 +16,19 @@ function mergeUserConfig(defaultOpts: { [key: string]: any }, api: IApi): IDumiO
   const result = Object.assign({}, defaultOpts);
 
   // has default value keys
-  ['mode', 'title', 'locales'].forEach(key => {
+  ['mode', 'title', 'locales'].forEach((key) => {
     result[key] = api.config[key] || result[key];
   });
 
   // non-default values keys
-  ['description', 'logo', 'menus', 'navs'].forEach(key => {
+  ['description', 'logo', 'menus', 'navs'].forEach((key) => {
     if (api.config[key]) {
       result[key] = api.config[key];
     }
   });
 
   // nested resolve keys
-  ['includes', 'previewLangs'].forEach(key => {
+  ['includes', 'previewLangs'].forEach((key) => {
     if (api.config.resolve?.[key]) {
       result.resolve[key] = api.config.resolve[key];
     }
@@ -42,7 +42,7 @@ function mergeUserConfig(defaultOpts: { [key: string]: any }, api: IApi): IDumiO
   return result;
 }
 
-export default function(api: IApi) {
+export default function (api: IApi) {
   // apply default options
   let pkg;
 
@@ -93,9 +93,9 @@ export default function(api: IApi) {
   });
 
   // repalce default routes with generated routes
-  api.modifyRoutes(routes => {
+  api.modifyRoutes((routes) => {
     const opts = mergeUserConfig(defaultOpts, api);
-    const root = routes.find(route => route.path === '/');
+    const root = routes.find((route) => route.path === '/');
     const childRoutes = root.routes;
     const meta = {
       menus: getMenuFromRoutes(childRoutes, opts, api.paths),
@@ -124,7 +124,7 @@ export default function(api: IApi) {
   });
 
   // exclude .md file for url-loader
-  api.modifyDefaultConfig(config => ({
+  api.modifyDefaultConfig((config) => ({
     ...config,
     urlLoaderExcludes: [/\.md$/],
     // pass empty routes if pages path does not exist and no routes config
@@ -133,13 +133,10 @@ export default function(api: IApi) {
   }));
 
   // configure loader for .md file
-  api.chainWebpack(config => {
+  api.chainWebpack((config, { webpack }) => {
     const opts = mergeUserConfig(defaultOpts, api);
     const oPlainTextTest = config.module.rule('plaintext').get('test');
-    const babelLoader = config.module
-      .rule('js')
-      .use('babel-loader')
-      .entries();
+    const babelLoader = config.module.rule('js').use('babel-loader').entries();
 
     // remove md file test from umi
     if (oPlainTextTest?.source?.includes('md')) {
@@ -162,6 +159,11 @@ export default function(api: IApi) {
       .use('dumi-loader')
       .loader(require.resolve('../loader'))
       .options({ previewLangs: opts.resolve.previewLangs });
+
+    // add package name into runtime env
+    config
+      .plugin('define')
+      .use(webpack.DefinePlugin, [{ 'process.env.PKG_NAME': JSON.stringify(api.pkg.name) }]);
 
     // add alias for current package(s)
     hostPkgAlias
@@ -210,7 +212,7 @@ export default function(api: IApi) {
   api.addTmpGenerateWatcherPaths(() => {
     const opts = mergeUserConfig(defaultOpts, api);
 
-    return [...opts.resolve.includes.map(key => path.join(api.paths.cwd, key, '**/*.md'))];
+    return [...opts.resolve.includes.map((key) => path.join(api.paths.cwd, key, '**/*.md'))];
   });
 
   // TODO: CLI help info

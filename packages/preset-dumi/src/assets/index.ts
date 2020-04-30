@@ -56,28 +56,6 @@ class AssetsPackage {
       version: pkg.version,
       description: pkg.description,
     };
-
-    const presets: Record<string, Preset[]> = JSON.parse(
-      fs.readFileSync(this.presetPath, { encoding: 'utf8' }),
-    );
-
-    this.examples = Object.entries(presets).reduce(
-      (col, [componentName, componentPresets]) => [
-        ...col,
-        ...componentPresets.map((p) => ({
-          ...p,
-          runtime: componentName,
-          dependencies: [
-            {
-              type: 'npmPack',
-              name: this.npmPack.name,
-              version: this.npmPack.version,
-            },
-          ],
-        })),
-      ],
-      [],
-    );
   }
 
   /**
@@ -131,9 +109,11 @@ class AssetsPackage {
   }
 
   /**
-   * add preset asset
+   * set preset asset
    */
-  addPresetAsset() {}
+  setPresets(data: string) {
+    fs.writeFileSync(this.presetPath, data);
+  }
 
   /**
    * add block asset
@@ -174,6 +154,28 @@ class AssetsPackage {
    * export asset package meta data
    */
   async export() {
+    const presets: Record<string, Preset[]> = JSON.parse(
+      fs.readFileSync(this.presetPath, { encoding: 'utf8' }),
+    );
+
+    this.examples = Object.entries(presets).reduce(
+      (col, [componentName, componentPresets]) => [
+        ...col,
+        ...componentPresets.map((p) => ({
+          ...p,
+          runtime: componentName,
+          dependencies: [
+            {
+              type: 'npmPack',
+              name: this.npmPack.name,
+              version: this.npmPack.version,
+            },
+          ],
+        })),
+      ],
+      [],
+    );
+
     return {
       ...this.npmPack,
       assets: {

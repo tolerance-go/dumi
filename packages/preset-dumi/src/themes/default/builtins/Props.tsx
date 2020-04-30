@@ -35,7 +35,8 @@ const Props: React.FC<PropsCommand> = ({ name }) => {
   const currentComponent = assets.assets.atoms[name];
   const propsConfig: { properties: { [key: string]: object } } = assets.assets.atoms[name];
   return currentComponent ? (
-    <>
+    <div className="markdown">
+      <h2>组件 API</h2>
       <Table
         bordered
         size="middle"
@@ -43,7 +44,7 @@ const Props: React.FC<PropsCommand> = ({ name }) => {
         columns={columns}
         dataSource={Object.entries(propsConfig.properties).map(([key, v]) => ({ ...v, key }))}
       />
-    </>
+    </div>
   ) : null;
 };
 

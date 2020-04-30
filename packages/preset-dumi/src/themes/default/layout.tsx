@@ -8,6 +8,7 @@ import { ILocale } from '../../routes/getLocaleFromRoutes';
 import Navbar from './Navbar';
 import SideMenu from './SideMenu';
 import Props from './builtins/Props';
+import Presets from './builtins/Presets';
 import SlugList, { scrollToSlug } from './SlugList';
 import SearchBar from './SearchBar';
 import 'prismjs/themes/prism.css';
@@ -346,6 +347,7 @@ export default class Layout extends Component<ILayoutProps & RouteProps> {
           {showFeatures && this.renderFeatures(currentRouteMeta.features)}
           <div className="__dumi-default-layout-content">
             {children}
+            <Presets module={currentRouteMeta.module} />
             <Props name={currentRouteMeta.module} />
             {!showHero && !showFeatures && (
               <div className="__dumi-default-layout-footer-meta">
