@@ -19,15 +19,19 @@ export default (api: IApi) => {
   api.registerCommand({
     name: 'assets-publish',
     async fn() {
-      const url = `http://yunfengdie.local.alipay.net:7001/api/assetsPackage/${encodeURIComponent(
-        api.pkg.name,
-      )}/autoRelease`;
+      const host = 'http://yunfengdie.dev.alipay.net';
+      const url = `${host}/api/assetsPackage/${encodeURIComponent(api.pkg.name)}/autoRelease`;
       const res = await axios.request({
         method: 'POST',
+        responseType: 'json',
         url,
       });
       if (res.status === 200) {
-        console.log('[autoRelease to yunfengdie]', res.data.message);
+        const { title, sites } = res.data;
+        console.log('[发布到云凤蝶资产包]', title);
+        sites.forEach((s) => {
+          console.log('[推送到应用]', `${host}/editor/console/${s}`);
+        });
       }
     },
   });

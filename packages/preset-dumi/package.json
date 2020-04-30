@@ -20,7 +20,7 @@
     "PeachScript <scdzwyxst@gmail.com> (https://github.com/PeachScript)"
   ],
   "dependencies": {
-    "@alipay/yunfengdie-sdk": "^2.0.0-beta.0",
+    "@alipay/yunfengdie-sdk": "^2.0.0-beta.1",
     "@babel/core": "^7.7.2",
     "@babel/generator": "^7.7.2",
     "@babel/plugin-proposal-class-properties": "^7.7.2",
