@@ -37,7 +37,7 @@ export default ({ module }) => {
               statusBar={false}
               search={false}
             />
-            {process.env.NODE_ENV ==== 'development' && (
+            {process.env.NODE_ENV === 'development' && (
               <Button
                 style={{ marginTop: 16 }}
                 type="primary"
