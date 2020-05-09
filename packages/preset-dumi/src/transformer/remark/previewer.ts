@@ -2,6 +2,7 @@ import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import demoTransformer, { DEMO_COMPONENT_NAME, getDepsForDemo } from '../demo';
 import transformer from '../index';
+import ctx from '../../context';
 
 function visitor(node, i, parent: Node) {
   if (node.tagName === 'div' && node.properties?.type === 'previewer') {
@@ -37,6 +38,22 @@ export default () => <Demo />;`;
     // transform demo source code
     const { content: code } = demoTransformer(transformCode, demoOpts);
     const { dependencies, files } = getDepsForDemo(raw, demoOpts);
+
+    if (ctx.assets) {
+      ctx.assets.addBlockAsset({
+        ...yaml,
+        name: yaml.title || 'dumi-block',
+        description: yaml.description,
+        dependencies,
+        files: {
+          ...files,
+          [`index.${demoOpts.isTSX ? 'tsx' : 'jsx'}`]: {
+            content: raw,
+            path: '',
+          },
+        },
+      });
+    }
 
     // save code into data then declare them on the top page component
     this.vFile.data.demos = (this.vFile.data.demos || []).concat(

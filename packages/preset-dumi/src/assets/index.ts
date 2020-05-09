@@ -15,7 +15,7 @@ interface IBlockAsset {
   files: {
     [key: string]: {
       path: string;
-      value: string;
+      content: string;
     };
   };
 }
@@ -121,7 +121,7 @@ class AssetsPackage {
   addBlockAsset({ dependencies, files, ...meta }: IBlockAsset) {
     this.examples.push({
       ...meta,
-      identifier: '123',
+      identifier: 'testing',
       type: 'BLOCK',
       dependencies: {
         // append npm dependencies
@@ -137,11 +137,11 @@ class AssetsPackage {
         ),
         // append local file dependencies
         ...Object.entries(files).reduce(
-          (result, [file, { value }]) =>
+          (result, [file, { content }]) =>
             Object.assign(result, {
               [file]: {
                 type: 'FILE',
-                value,
+                value: content,
               },
             }),
           {},
@@ -158,22 +158,24 @@ class AssetsPackage {
       fs.readFileSync(this.presetPath, { encoding: 'utf8' }),
     );
 
-    this.examples = Object.entries(presets).reduce(
-      (col, [componentName, componentPresets]) => [
-        ...col,
-        ...componentPresets.map((p) => ({
-          ...p,
-          runtime: componentName,
-          dependencies: [
-            {
-              type: 'npmPack',
-              name: this.npmPack.name,
-              version: this.npmPack.version,
-            },
-          ],
-        })),
-      ],
-      [],
+    this.examples.push(
+      ...Object.entries(presets).reduce(
+        (col, [componentName, componentPresets]) => [
+          ...col,
+          ...componentPresets.map((p) => ({
+            ...p,
+            runtime: componentName,
+            dependencies: [
+              {
+                type: 'npmPack',
+                name: this.npmPack.name,
+                version: this.npmPack.version,
+              },
+            ],
+          })),
+        ],
+        [],
+      ),
     );
 
     return {

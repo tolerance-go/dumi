@@ -1,7 +1,11 @@
+import fs from 'fs';
 import url from 'url';
+import path from 'path';
 import { IApi } from '@umijs/types';
 import axios from 'axios';
 import Assets from '../assets';
+import getRouteConfig from '../routes/getRouteConfig';
+import ctx, { init as setContext } from '../context';
 
 export default (api: IApi) => {
   const assetsPkg = new Assets(api.pkg);
@@ -9,10 +13,20 @@ export default (api: IApi) => {
   api.registerCommand({
     name: 'assets',
     async fn() {
+      setContext(ctx.umi, ctx.opts, assetsPkg);
+
+      getRouteConfig(api, ctx.opts);
+
+      const assetsJSON = JSON.stringify(await assetsPkg.export(), null, 2);
+
+      // for yunfengdie
       api.writeTmpFile({
         path: '.assets.json',
-        content: JSON.stringify(await assetsPkg.export(), null, 2),
+        content: assetsJSON,
       });
+
+      // for umi ui
+      fs.writeFileSync(path.join(api.cwd, 'dist/assets.json'), assetsJSON);
     },
   });
 

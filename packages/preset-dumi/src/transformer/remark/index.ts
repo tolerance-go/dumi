@@ -78,7 +78,7 @@ export default (raw: string, opts: IRemarkOpts) => {
     .data('fileAbsPath', opts.fileAbsPath);
 
   // apply plugins through strategy
-  PLUGIN_STRATEGIES[opts.strategy].forEach(plugin => {
+  PLUGIN_STRATEGIES[opts.strategy].forEach((plugin) => {
     processor.use(...plugin);
   });
 

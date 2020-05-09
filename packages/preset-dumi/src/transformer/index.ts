@@ -6,6 +6,7 @@ import remark from './remark';
 import html from './html';
 import demo, { getDepsForDemo } from './demo';
 import FileCache from '../utils/cache';
+import ctx from '../context';
 
 const FRONT_COMMENT_EXP = /^\n*\/\*[^]+?\s*\*\/\n*/;
 const markdownCache = new FileCache();
@@ -86,7 +87,7 @@ export default {
       remark(raw, {
         fileAbsPath: opts.fileAbsPath,
         strategy: opts.onlyConfig ? 'data' : 'default',
-        previewLangs: opts.previewLangs || [],
+        previewLangs: opts.previewLangs || ctx.opts.resolve.previewLangs,
       });
     const { demos, ...metas } = result.data as any;
     let content = '';

@@ -70,6 +70,13 @@ export default function (api: IApi) {
     mode: 'doc',
   };
 
+  api.onStart(() => {
+    const opts = mergeUserConfig(defaultOpts, api);
+
+    // save umi api & opts into context
+    setContext(api, opts);
+  });
+
   // repalce default routes with generated routes
   api.onPatchRoutesBefore(({ routes, parentRoute }) => {
     // only deal with the top level routes
