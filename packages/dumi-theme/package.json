@@ -1,0 +1,27 @@
+{
+  "name": "dumi-theme",
+  "version": "1.0.0",
+  "description": "dumi theme",
+  "main": "lib/index.js",
+  "files": [
+    "dist",
+    "lib",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/umijs/dumi",
+    "directory": "dumi-theme"
+  },
+  "dependencies": {
+    "react-clipboard.js": "^2.0.16"
+  },
+  "peerDependencies": {
+    "umi": "3.x"
+  },
+  "authors": [
+    "合一 <1255968521@qq.com> (https://github.com/HeyiMaster)",
+    "PeachScript <scdzwyxst@gmail.com> (https://github.com/PeachScript)"
+  ],
+  "license": "MIT"
+}
